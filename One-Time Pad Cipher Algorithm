@@ -1,0 +1,117 @@
+import string
+
+# global variable
+cipherKey = ''
+list1 = []
+list2 = []
+list3 = []
+caps = False
+
+
+def print_result(result):
+    if caps:
+        print(''.join(result).upper())
+    else:
+        print(''.join(result))
+
+
+def check_case(c_text):
+    print(c_text)
+    if c_text.isupper():
+        global caps
+        caps = True
+        c_text = c_text.lower()
+        return c_text
+    else:
+        return c_text
+
+
+print("One Time Pad Cipher Algorithm")
+print("1.Encryption \n2. Decryption")
+select = int(input("Choice: "))
+
+#Encryption from here
+if select == 1:
+    print("Enter a Text:")
+    plainText = check_case(input())
+    print("Enter a key :")
+    cipherKey = check_case(input())
+
+    # matching key length with text
+    while len(cipherKey) < len(plainText):
+        cipherKey = cipherKey + cipherKey
+
+    cipherKey = cipherKey[0:len(plainText)]  # trim the cipher key to handle exception errors
+
+    #print(cipherKey)
+
+    # copy plain text to list1
+    for n in plainText:
+        list1.append(string.ascii_lowercase.index(n))
+
+    # copy plain text to list
+    for m in cipherKey:
+        list2.append(string.ascii_lowercase.index(m))
+
+    # making the sum of those two letter index
+    for i in range(len(plainText)):
+        a = list1[i]
+        b = list2[i]
+        sum = a + b
+
+        # check if the sum is greater than 26 or not
+        if sum >= 26:
+            sum = sum - 26
+        # add to new list 3 for later work
+        list3.append(sum)
+
+    # create new list to store cipher text
+    cipherText = []
+
+    # store to list 3 by finding ascii of numbers
+    for i in range(len(plainText)):
+        cipherText.append(string.ascii_lowercase[list3[i]+1])  # +1 if we want a = 1
+
+    print_result(cipherText)
+
+# for Decryption
+elif select == 2:
+    print("Enter a Decrypted Text:")
+    decText = check_case(input())
+    print("Enter a key :")
+    cipherKey = check_case(input())
+
+    # matching key length with text
+    while len(cipherKey) < len(decText):
+        cipherKey = cipherKey + cipherKey
+
+    cipherKey = cipherKey[0:len(decText)]  # trim the cipher key to handle exception errors
+
+    # store decrypted text to list 3
+    for m in decText:
+        list3.append(string.ascii_lowercase.index(m)+1)
+
+    # store cipher key to list 2
+    for n in cipherKey:
+        list2.append(string.ascii_lowercase.index(n)+1)
+
+    # create new list 4 for later use
+    list4 = []
+
+    # substituting cipher value from decrypted value
+    for i in range(len(cipherKey)):
+        sub = list3[i] - list2[i]
+
+        # check if any value is in negative, if so than add 26 with them
+        if sub < 0:
+            sub = sub + 26
+        list4.append(sub)
+
+    # create new list to store decrypted string
+    decryptedCipherText = []
+
+    for i in range(len(cipherKey)):
+        decryptedCipherText.append(string.ascii_lowercase[list4[i]-1])  # -1 if we want a = 1
+
+    # print(list4)
+    print_result(decryptedCipherText)

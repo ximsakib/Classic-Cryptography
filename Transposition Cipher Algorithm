@@ -1,0 +1,109 @@
+import string
+
+# GLOBAL VARIABLES
+plain_text_filled = []
+keep_filling = 26
+letter_list = []
+encrypted_letter_list = []
+decrypted_letter_list = []
+
+
+# printing the results
+def print_result(result):
+    for r in result:
+        for c in r:
+            print(c, end=" ")
+        print()
+
+
+print("Transposition Cipher Algorithm")
+print("1.Encryption \n2. Decryption")
+select = int(input("Choice: "))
+
+# Encryption From Here
+if select == 1:
+    print("Enter a Text:")
+    plain_text = input()
+    print("Enter a key:")
+    plain_key = int(input())
+    len_key = len(str(plain_key))  # find the length of key
+    blank_to_fill = (len_key * len_key) - len(plain_text)  # finding how many more extra letter need
+    keep_filling -= blank_to_fill  # another variable for reverse iteration
+
+    #adding plain text to plain text fill list
+    for i in plain_text:
+        plain_text_filled.append(i)
+
+    #adding extra letters to the same plain text fill list until it make the matrix full
+    for i in range(blank_to_fill):
+        plain_text_filled.append(string.ascii_lowercase[keep_filling])
+        keep_filling += 1
+
+    #extracting all the numbers from the int value ex. 452 -> 4,5,2
+    list_key = [int(x) for a, x in enumerate(str(plain_key))]
+
+    #converting the plain text that filled with extra alphabets to 2D list / nxn matrix
+    increment = 0
+    for i in range(len_key):
+        a = []
+        for j in range(len_key):
+            a.append(plain_text_filled[increment])
+            increment += 1
+        letter_list.append(a)
+
+    #making a copy of the key in list form so original key stay uncorrupted
+    list_key_copy = list_key.copy()
+
+    #find the index of min value from list key and manipulating the rows and columns
+    #stroing them in another 2D list / nxn matrix
+    for x in range(len_key):
+        min_index = list_key_copy.index(min(list_key_copy))
+        b = []
+        for y in range(len_key):
+            b.append(letter_list[y][min_index])
+        encrypted_letter_list.append(b)
+        list_key_copy[min_index] = 100
+
+    #call the print_function to print as a matrix form
+    print_result(encrypted_letter_list)
+
+
+#Decryption from here
+elif select == 2:
+    print("Enter a Decrypted Text:")
+    plain_text = input()
+    print("Enter a key:")
+    plain_key = int(input())
+    len_key = len(str(plain_key))
+
+    #storing the decrypted text to letter list as 2D list / nxn matrix
+    increment = 0
+    for i in range(len_key):
+        a = []
+        for j in range(len_key):
+            a.append(plain_text[increment])
+            increment += 1
+        letter_list.append(a)
+
+    #extracting all the numbers from the int value ex. 452 -> 4,5,2
+    list_key = [int(x) for a, x in enumerate(str(plain_key))]
+
+    #making a copy of the key in list form so original key stay uncorrupted
+    list_key_copy = list_key.copy()
+    decrypted_letter_list = letter_list.copy()
+    increment = 0
+
+    # find the index of min value from list key and manipulating the rows and columns
+    # storing them in another 2D list / nxn matrix
+    for x in range(len_key):
+        min_index = list_key_copy.index(min(list_key_copy))
+
+        b = []
+        for y in range(len_key):
+            decrypted_letter_list[y][min_index] = plain_text[increment]
+            increment += 1
+
+        list_key_copy[min_index] = 100  # changing the min value, so it stays there but not count as min again
+
+    #print the result as matrix form
+    print_result(decrypted_letter_list)
